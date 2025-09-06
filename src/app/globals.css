@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "@livekit/components-styles";
 
 /* Custom animation delays for loading spinner */
 @layer utilities {
