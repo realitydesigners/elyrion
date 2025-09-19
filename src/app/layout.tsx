@@ -153,10 +153,10 @@ export default function RootLayout({
         <meta name="msapplication-TileColor" content="#603cba" />
       </head>
       <body
-        className={`${inter.variable} font-sans antialiased bg-slate-900 text-white`}
+        className={`${inter.variable} font-sans antialiased min-h-screen bg-slate-900 text-white`}
       >
         <Header />
-        <main className="pt-24">{children}</main>
+        <main className="pt-24 min-h-screen">{children}</main>
         <Footer />
       </body>
     </html>

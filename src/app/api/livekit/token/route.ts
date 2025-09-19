@@ -1,11 +1,10 @@
-import { env } from "@/lib/env";
 import { NextResponse } from "next/server";
 import { AccessToken } from "livekit-server-sdk";
 import { getSupabaseServer } from "@/lib/supabaseServer";
 import { isTeacher } from "@/lib/auth";
 
 export async function GET(request: Request) {
-  if (!env.LIVEKIT_API_KEY || !env.LIVEKIT_API_SECRET) {
+  if (!process.env.LIVEKIT_API_KEY || !process.env.LIVEKIT_API_SECRET) {
     return NextResponse.json(
       { error: "LiveKit not configured" },
       { status: 500 }
@@ -28,9 +27,13 @@ export async function GET(request: Request) {
   }
 
   const identity = `${role}-${user.id}`;
-  const at = new AccessToken(env.LIVEKIT_API_KEY, env.LIVEKIT_API_SECRET, {
-    identity,
-  });
+  const at = new AccessToken(
+    process.env.LIVEKIT_API_KEY!,
+    process.env.LIVEKIT_API_SECRET!,
+    {
+      identity,
+    }
+  );
   at.addGrant({
     room: roomName,
     roomJoin: true,
@@ -38,5 +41,5 @@ export async function GET(request: Request) {
     canSubscribe: true,
   });
   const token = await at.toJwt();
-  return NextResponse.json({ token, url: env.LIVEKIT_URL, roomName });
+  return NextResponse.json({ token, url: process.env.LIVEKIT_URL, roomName });
 }

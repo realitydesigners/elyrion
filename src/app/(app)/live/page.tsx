@@ -9,7 +9,9 @@ import {
   LiveKitRoom,
   RoomAudioRenderer,
   useTracks,
-  VideoTrack,
+  GridLayout,
+  TrackLoop,
+  ParticipantTile,
 } from "@livekit/components-react";
 import { Track } from "livekit-client";
 
@@ -160,26 +162,16 @@ export default function LivePage() {
 
 function VideoGrid() {
   const tracks = useTracks([
-    {
-      source: Track.Source.Camera,
-      withPlaceholder: true,
-    },
     { source: Track.Source.ScreenShare, withPlaceholder: true },
+    { source: Track.Source.Camera, withPlaceholder: true },
   ]);
-
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-1 w-full h-full">
-      {tracks.map((trackRef) => (
-        <div
-          key={trackRef.publication?.trackSid ?? Math.random()}
-          className="relative"
-        >
-          <VideoTrack
-            trackRef={trackRef}
-            className="w-full h-full object-cover"
-          />
-        </div>
-      ))}
+    <div className="w-full h-full">
+      <GridLayout tracks={tracks} className="w-full h-full">
+        <TrackLoop tracks={tracks}>
+          <ParticipantTile />
+        </TrackLoop>
+      </GridLayout>
     </div>
   );
 }
