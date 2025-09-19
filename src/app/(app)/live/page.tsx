@@ -4,16 +4,24 @@ import { useEffect, useState, useRef } from "react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
-import NextClassBanner from "@/components/NextClassBanner";
 import {
   LiveKitRoom,
   RoomAudioRenderer,
   useTracks,
-  GridLayout,
-  TrackLoop,
-  ParticipantTile,
+  VideoTrack,
 } from "@livekit/components-react";
 import { Track } from "livekit-client";
+import {
+  HiPlay,
+  HiUsers,
+  HiChatBubbleLeftRight,
+  HiHeart,
+  HiExclamationTriangle,
+  HiPaperAirplane,
+  HiChevronDown,
+  HiEye,
+  HiSignal,
+} from "react-icons/hi2";
 
 type ChatMessage = { id: string; author: string; text: string; at: string };
 import { createClient } from "@/lib/supabase/client";
@@ -21,7 +29,7 @@ import { createClient } from "@/lib/supabase/client";
 export default function LivePage() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [chatText, setChatText] = useState("");
-  const [viewerCount] = useState<number>(128); // placeholder
+  const [viewerCount] = useState<number>(2); // placeholder
 
   async function sendMessage(e: React.FormEvent) {
     e.preventDefault();
@@ -99,79 +107,150 @@ export default function LivePage() {
   }, [livekit.roomName]);
 
   return (
-    <div className="min-h-screen grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-4 p-4 lg:p-6">
-      <div className="lg:col-span-2 -mt-2">
-        <NextClassBanner />
+    <div className="min-h-screen  to-slate-900">
+      {/* Professional Header */}
+      <div className="  backdrop-blur-sm">
+        <div className="w-full mx-auto px-4 lg:px-6 "></div>
       </div>
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <span className="inline-flex items-center gap-2 rounded-full bg-red-500/15 text-red-300 px-3 py-1 text-xs font-semibold">
-              <span className="h-2 w-2 rounded-full bg-red-500 animate-pulse" />
-              Live now
-            </span>
-            <h1 className="text-lg font-semibold">Elyrion Class</h1>
+
+      <div className="w-full mx-auto grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-6 p-4 lg:p-6">
+        <div className="space-y-4">
+          {/* Modern Video Player */}
+          <div className="relative rounded-2xl overflow-hidden border border-blue-500/20 bg-gradient-to-br from-slate-800 to-slate-900 shadow-2xl">
+            <div className="relative w-full aspect-video bg-black">
+              {livekit.url && livekit.token ? (
+                <LiveKitRoom
+                  serverUrl={livekit.url}
+                  token={livekit.token}
+                  connect
+                  audio
+                >
+                  <RoomAudioRenderer />
+                  <VideoGrid />
+                </LiveKitRoom>
+              ) : (
+                <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-blue-900/20 to-slate-900/80">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mb-4"></div>
+                  <span className="text-blue-300 font-medium">
+                    Connecting to stream...
+                  </span>
+                  <span className="text-blue-400/60 text-sm mt-1">
+                    Please wait while we establish connection
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
-          <div className="text-white/60 text-sm">Viewers: {viewerCount}</div>
-        </div>
-        <Card className="p-0 overflow-hidden">
-          <div className="relative w-full aspect-video bg-black/60">
-            {livekit.url && livekit.token ? (
-              <LiveKitRoom
-                serverUrl={livekit.url}
-                token={livekit.token}
-                connect
-                audio
-              >
-                <RoomAudioRenderer />
-                <VideoGrid />
-              </LiveKitRoom>
-            ) : (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-white/60">Connecting…</span>
+          <div className="flex items-center w-full justify-end">
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2 px-3 py-2 rounded-lg  border border-blue-500/20">
+                <HiEye className="h-4 w-4 text-blue-400" />
+                <span className="text-blue-300 font-medium">{viewerCount}</span>
+                <span className="text-blue-400 text-sm">viewers</span>
               </div>
-            )}
+              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-red-500/10 border border-red-500/20">
+                <div className="h-2 w-2 rounded-full bg-red-500 animate-pulse" />
+                <span className="text-red-300 font-medium text-sm">LIVE</span>
+              </div>
+            </div>
           </div>
-        </Card>
+        </div>
 
-        <div className="flex items-center gap-2">
-          <Button variant="secondary">Reactions</Button>
-          <Button variant="outline">Report Issue</Button>
+        {/* Modern Chat Panel */}
+        <div className="h-[calc(100vh-8rem)] flex flex-col rounded-2xl border border-blue-500/20 bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-sm shadow-2xl">
+          <div className="flex items-center justify-between p-4 border-b border-blue-500/20">
+            <div className="flex items-center gap-3">
+              <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
+                <HiChatBubbleLeftRight className="h-4 w-4 text-white" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-white">Live Chat</h3>
+                <p className="text-xs text-blue-300">Join the conversation</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 px-2 py-1 rounded-lg bg-blue-500/10">
+              <HiUsers className="h-4 w-4 text-blue-400" />
+              <span className="text-blue-300 text-sm font-medium">
+                {messages.length}
+              </span>
+            </div>
+          </div>
+
+          <div className="flex-1 flex flex-col min-h-0">
+            <ChatList messages={messages} />
+            <div className="p-4 border-t border-blue-500/20 bg-slate-900/50">
+              <form onSubmit={sendMessage} className="flex items-center gap-3">
+                <div className="flex-1 relative">
+                  <Input
+                    placeholder="Share your thoughts..."
+                    value={chatText}
+                    onChange={(e) => setChatText(e.target.value)}
+                    className="bg-slate-800/50 border-blue-500/30 text-white placeholder:text-blue-300/60 pr-12 focus:border-blue-400 focus:ring-blue-400/20"
+                  />
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2 text-blue-400/60">
+                    <HiPaperAirplane className="h-4 w-4" />
+                  </div>
+                </div>
+                <Button
+                  type="submit"
+                  className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white border-0 px-6"
+                >
+                  Send
+                </Button>
+              </form>
+            </div>
+          </div>
         </div>
       </div>
-
-      <Card className="h-[calc(100vh-2rem)] lg:h-[calc(100vh-3rem)] flex flex-col">
-        <CardHeader className="pb-2">
-          <CardTitle>Live Chat</CardTitle>
-        </CardHeader>
-        <CardContent className="flex-1 flex flex-col min-h-0">
-          <ChatList messages={messages} />
-          <form onSubmit={sendMessage} className="mt-3 flex items-center gap-2">
-            <Input
-              placeholder="Say something nice..."
-              value={chatText}
-              onChange={(e) => setChatText(e.target.value)}
-            />
-            <Button type="submit">Send</Button>
-          </form>
-        </CardContent>
-      </Card>
     </div>
   );
 }
 
 function VideoGrid() {
   const tracks = useTracks([
-    { source: Track.Source.ScreenShare, withPlaceholder: true },
-    { source: Track.Source.Camera, withPlaceholder: true },
+    { source: Track.Source.ScreenShare, withPlaceholder: false },
+    { source: Track.Source.Camera, withPlaceholder: false },
   ]);
+  const realTracks = tracks.filter(
+    (t) => t.publication && t.publication.trackSid
+  );
   return (
-    <div className="w-full h-full">
-      <GridLayout tracks={tracks} className="w-full h-full">
-        <TrackLoop tracks={tracks}>
-          <ParticipantTile />
-        </TrackLoop>
-      </GridLayout>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-2 w-full h-full p-2">
+      {realTracks.map((t) => (
+        <div
+          key={t.publication!.trackSid}
+          className="relative bg-slate-900 rounded-xl overflow-hidden border border-blue-500/20"
+        >
+          <VideoTrack
+            trackRef={t as any}
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute top-3 left-3 flex items-center gap-2 px-3 py-1.5 rounded-lg bg-black/80 backdrop-blur-sm border border-white/10">
+            <div className="h-2 w-2 rounded-full bg-green-500"></div>
+            <span className="text-white text-xs font-medium">
+              {t.source === Track.Source.ScreenShare
+                ? "Screen Share"
+                : "Instructor"}
+            </span>
+          </div>
+          {t.source === Track.Source.Camera && (
+            <div className="absolute bottom-3 right-3 px-2 py-1 rounded-lg bg-blue-500/20 backdrop-blur-sm border border-blue-500/30">
+              <span className="text-blue-200 text-xs font-medium">Live</span>
+            </div>
+          )}
+        </div>
+      ))}
+      {realTracks.length === 0 ? (
+        <div className="flex flex-col items-center justify-center text-blue-300/60 h-full">
+          <div className="h-16 w-16 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mb-4">
+            <HiPlay className="h-8 w-8 text-blue-400" />
+          </div>
+          <p className="font-medium">Waiting for stream</p>
+          <p className="text-sm text-blue-400/40 mt-1">
+            The instructor will begin shortly
+          </p>
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -198,20 +277,43 @@ function ChatList({ messages }: { messages: ChatMessage[] }) {
           el.scrollHeight - el.scrollTop - el.clientHeight < 40;
         setAtBottom(nearBottom);
       }}
-      className="flex-1 overflow-y-auto space-y-3 pr-1"
+      className="flex-1 overflow-y-auto space-y-4 p-4 scrollbar-thin scrollbar-thumb-blue-500/20 scrollbar-track-transparent"
     >
-      {messages.map((m) => (
-        <div key={m.id} className="text-sm">
-          <div className="flex items-baseline gap-2">
-            <span className="font-medium text-white/90">{m.author}</span>
-            <span className="text-white/40 text-xs">{m.at}</span>
+      {messages.length === 0 ? (
+        <div className="flex flex-col items-center justify-center h-full text-blue-300/60">
+          <div className="h-12 w-12 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mb-3">
+            <HiChatBubbleLeftRight className="h-6 w-6 text-blue-400" />
           </div>
-          <div className="mt-1 inline-block max-w-full rounded-lg bg-white/10 px-3 py-2 text-white/90">
-            {m.text}
-          </div>
+          <p className="font-medium">No messages yet</p>
+          <p className="text-sm text-blue-400/40 mt-1">
+            Be the first to say hello!
+          </p>
         </div>
-      ))}
-      {!atBottom ? (
+      ) : (
+        messages.map((m) => (
+          <div key={m.id} className="group">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="h-6 w-6 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center flex-shrink-0">
+                <span className="text-white text-xs font-bold">
+                  {m.author.charAt(0).toUpperCase()}
+                </span>
+              </div>
+              <div className="flex items-baseline gap-2">
+                <span className="font-semibold text-white text-sm">
+                  {m.author}
+                </span>
+                <span className="text-blue-300/60 text-xs">{m.at}</span>
+              </div>
+            </div>
+            <div className="ml-9 relative">
+              <div className="inline-block max-w-full rounded-2xl bg-gradient-to-br from-slate-700/50 to-slate-800/50 border border-blue-500/10 px-4 py-2.5 text-white/90 backdrop-blur-sm">
+                {m.text}
+              </div>
+            </div>
+          </div>
+        ))
+      )}
+      {!atBottom && messages.length > 0 ? (
         <button
           onClick={() => {
             containerRef.current?.scrollTo({
@@ -219,8 +321,9 @@ function ChatList({ messages }: { messages: ChatMessage[] }) {
               behavior: "smooth",
             });
           }}
-          className="sticky bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-white text-neutral-900 px-3 py-1 text-xs font-medium shadow"
+          className="sticky bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-4 py-2 text-xs font-medium shadow-lg border border-blue-400/20 backdrop-blur-sm flex items-center gap-2"
         >
+          <HiChevronDown className="h-3 w-3" />
           Jump to latest
         </button>
       ) : null}
