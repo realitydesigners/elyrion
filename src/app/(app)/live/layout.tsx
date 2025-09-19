@@ -10,3 +10,4 @@ export default async function LiveLayout({
   if (!user) redirect("/sign-in");
   return <>{children}</>;
 }
+

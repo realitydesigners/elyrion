@@ -1,7 +1,6 @@
 @import "tailwindcss";
-@import "@livekit/components-styles";
+/* @import "@livekit/components-styles"; */
 
-/* Custom animation delays for loading spinner */
 @layer utilities {
   .animation-delay-0 {
     animation-delay: 0s;

@@ -11,3 +11,4 @@ export default async function HostLayout({
   if (!isTeacher(user.email)) redirect("/");
   return <>{children}</>;
 }
+

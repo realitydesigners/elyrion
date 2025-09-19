@@ -8,3 +8,4 @@ export async function POST(request: Request) {
     new URL(`/account?started=${price}`, request.url)
   );
 }
+

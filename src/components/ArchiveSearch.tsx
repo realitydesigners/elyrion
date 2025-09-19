@@ -21,3 +21,4 @@ export default function ArchiveSearch({
   }, []);
   return <Input ref={ref} placeholder={placeholder} />;
 }
+

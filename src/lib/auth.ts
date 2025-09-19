@@ -15,3 +15,4 @@ export function isTeacher(email: string | null | undefined) {
     .filter(Boolean);
   return allow.includes(email.toLowerCase());
 }
+

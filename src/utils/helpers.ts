@@ -11,3 +11,4 @@ export function getURL(path: string = "/") {
     : "http://localhost:3000";
   return `${base}${path}`;
 }
+

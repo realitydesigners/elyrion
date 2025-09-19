@@ -5,3 +5,4 @@ export async function GET(request: Request) {
   const origin = url.origin;
   return NextResponse.redirect(`${origin}/`);
 }
+
