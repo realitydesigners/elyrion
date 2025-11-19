@@ -9,6 +9,7 @@ import {
   RoomAudioRenderer,
   useTracks,
   VideoTrack,
+  useRoomContext,
 } from "@livekit/components-react";
 import { Track } from "livekit-client";
 import {
@@ -21,6 +22,8 @@ import {
   HiChevronDown,
   HiEye,
   HiSignal,
+  HiMicrophone,
+  HiOutlineMicrophone,
 } from "react-icons/hi2";
 
 type ChatMessage = { id: string; author: string; text: string; at: string };
@@ -114,21 +117,42 @@ export default function LivePage() {
       </div>
 
       <div className="w-full mx-auto grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-6 p-4 lg:p-6">
-        <div className="space-y-4">
-          {/* Modern Video Player */}
-          <div className="relative rounded-2xl overflow-hidden border border-blue-500/20 bg-gradient-to-br from-slate-800 to-slate-900 shadow-2xl">
-            <div className="relative w-full aspect-video bg-black">
-              {livekit.url && livekit.token ? (
-                <LiveKitRoom
-                  serverUrl={livekit.url}
-                  token={livekit.token}
-                  connect
-                  audio
-                >
+        {livekit.url && livekit.token ? (
+          <LiveKitRoom
+            serverUrl={livekit.url}
+            token={livekit.token}
+            connect
+            audio
+            video={false}
+          >
+            <div className="space-y-4">
+              {/* Modern Video Player */}
+              <div className="relative rounded-2xl overflow-hidden border border-blue-500/20 bg-gradient-to-br from-slate-800 to-slate-900 shadow-2xl">
+                <div className="relative w-full aspect-video bg-black">
                   <RoomAudioRenderer />
                   <VideoGrid />
-                </LiveKitRoom>
-              ) : (
+                </div>
+              </div>
+              <div className="flex items-center w-full justify-between">
+                <ViewerControls />
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2 px-3 py-2 rounded-lg  border border-blue-500/20">
+                    <HiEye className="h-4 w-4 text-blue-400" />
+                    <span className="text-blue-300 font-medium">{viewerCount}</span>
+                    <span className="text-blue-400 text-sm">viewers</span>
+                  </div>
+                  <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-red-500/10 border border-red-500/20">
+                    <div className="h-2 w-2 rounded-full bg-red-500 animate-pulse" />
+                    <span className="text-red-300 font-medium text-sm">LIVE</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </LiveKitRoom>
+        ) : (
+          <div className="space-y-4">
+            <div className="relative rounded-2xl overflow-hidden border border-blue-500/20 bg-gradient-to-br from-slate-800 to-slate-900 shadow-2xl">
+              <div className="relative w-full aspect-video bg-black">
                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-blue-900/20 to-slate-900/80">
                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mb-4"></div>
                   <span className="text-blue-300 font-medium">
@@ -138,23 +162,23 @@ export default function LivePage() {
                     Please wait while we establish connection
                   </span>
                 </div>
-              )}
-            </div>
-          </div>
-          <div className="flex items-center w-full justify-end">
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2 px-3 py-2 rounded-lg  border border-blue-500/20">
-                <HiEye className="h-4 w-4 text-blue-400" />
-                <span className="text-blue-300 font-medium">{viewerCount}</span>
-                <span className="text-blue-400 text-sm">viewers</span>
-              </div>
-              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-red-500/10 border border-red-500/20">
-                <div className="h-2 w-2 rounded-full bg-red-500 animate-pulse" />
-                <span className="text-red-300 font-medium text-sm">LIVE</span>
               </div>
             </div>
+            <div className="flex items-center w-full justify-end">
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2 px-3 py-2 rounded-lg  border border-blue-500/20">
+                  <HiEye className="h-4 w-4 text-blue-400" />
+                  <span className="text-blue-300 font-medium">{viewerCount}</span>
+                  <span className="text-blue-400 text-sm">viewers</span>
+                </div>
+                <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-red-500/10 border border-red-500/20">
+                  <div className="h-2 w-2 rounded-full bg-red-500 animate-pulse" />
+                  <span className="text-red-300 font-medium text-sm">LIVE</span>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Modern Chat Panel */}
         <div className="h-[calc(100vh-8rem)] flex flex-col rounded-2xl border border-blue-500/20 bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-sm shadow-2xl">
@@ -252,6 +276,43 @@ function VideoGrid() {
         </div>
       ) : null}
     </div>
+  );
+}
+
+function ViewerControls() {
+  const room = useRoomContext();
+  const localParticipant = room.localParticipant;
+  const isMicEnabled = localParticipant.isMicrophoneEnabled;
+
+  async function toggleMic() {
+    if (localParticipant.isMicrophoneEnabled) {
+      await room.localParticipant.setMicrophoneEnabled(false);
+    } else {
+      await room.localParticipant.setMicrophoneEnabled(true);
+    }
+  }
+
+  return (
+    <button
+      onClick={toggleMic}
+      className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium border transition-all duration-200 ${
+        isMicEnabled
+          ? "bg-white text-slate-900 border-white/20 shadow-lg"
+          : "bg-slate-700/50 text-slate-300 hover:bg-slate-600/50 border-slate-600/30"
+      }`}
+    >
+      {isMicEnabled ? (
+        <>
+          <HiMicrophone className="h-5 w-5" />
+          <span>Mic On</span>
+        </>
+      ) : (
+        <>
+          <HiOutlineMicrophone className="h-5 w-5" />
+          <span>Mic Off</span>
+        </>
+      )}
+    </button>
   );
 }
 

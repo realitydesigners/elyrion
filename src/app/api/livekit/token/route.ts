@@ -28,7 +28,7 @@ export async function GET(request: Request) {
     at.addGrant({
       room: roomName,
       roomJoin: true,
-      canPublish: role === "host",
+      canPublish: true,
       canSubscribe: true,
     });
     const token = await at.toJwt();
@@ -37,7 +37,7 @@ export async function GET(request: Request) {
   if (!user)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const canPublish = role === "host" ? true : false; // allow anonymous host for testing
+  const canPublish = true;
 
   const identity = `${role}-${user.id}`;
   const at = new AccessToken(
