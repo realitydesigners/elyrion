@@ -33,7 +33,7 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const protectedRoutes = ["/live", "/host", "/archive", "/account", "/pricing"];
+  const protectedRoutes = ["/live", "/host", "/archive", "/account", "/pricing", "/dashboard"];
   const isProtectedRoute = protectedRoutes.some((route) =>
     request.nextUrl.pathname.startsWith(route)
   );
@@ -43,6 +43,31 @@ export async function updateSession(request: NextRequest) {
     url.pathname = "/sign-in";
     url.searchParams.set("redirect", request.nextUrl.pathname);
     return NextResponse.redirect(url);
+  }
+
+  const subscriptionRequiredRoutes = ["/live", "/archive"];
+  const isSubscriptionRequired = subscriptionRequiredRoutes.some((route) =>
+    request.nextUrl.pathname.startsWith(route)
+  );
+
+  if (isSubscriptionRequired && user) {
+    const { data: subscription } = await supabase
+      .from("subscriptions")
+      .select("status, current_period_end")
+      .eq("user_id", user.id)
+      .eq("status", "active")
+      .single();
+
+    const hasActiveSubscription =
+      subscription &&
+      subscription.status === "active" &&
+      new Date(subscription.current_period_end) > new Date();
+
+    if (!hasActiveSubscription) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/dashboard";
+      return NextResponse.redirect(url);
+    }
   }
 
   const isHostRoute = request.nextUrl.pathname.startsWith("/host");

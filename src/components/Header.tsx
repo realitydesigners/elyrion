@@ -47,6 +47,7 @@ export default function Header() {
 
           {/* Enhanced Navigation */}
           <nav className="hidden md:flex items-center space-x-2">
+            <NavLink href="/dashboard" icon={HiSparkles} label="Dashboard" />
             <NavLink href="/live" icon={HiPlay} label="Live" />
             <NavLink href="/archive" icon={HiArchiveBox} label="Archive" />
             <NavLink href="/host" icon={HiMicrophone} label="Host" />
