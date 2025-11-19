@@ -3,14 +3,17 @@ import { createClient } from "@/lib/supabase/client";
 import { getURL } from "@/utils/helpers";
 import type { Provider } from "@supabase/supabase-js";
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { FcGoogle } from "react-icons/fc";
 
-function useSignInWithOAuth() {
+function useSignInWithOAuth(redirect?: string | null) {
   const supabase = createClient();
 
   return async (e: React.FormEvent<HTMLFormElement>, provider: Provider) => {
     e.preventDefault();
-    const redirectURL = getURL("/api/auth/callback");
+    const redirectURL = redirect
+      ? getURL(`/api/auth/callback?redirect=${encodeURIComponent(redirect)}`)
+      : getURL("/api/auth/callback");
 
     if (provider === "discord") {
       await supabase.auth.signInWithOAuth({
@@ -31,11 +34,13 @@ function useSignInWithOAuth() {
   };
 }
 
-function useSignInWithEmail() {
+function useSignInWithEmail(redirect?: string | null) {
   const supabase = createClient();
 
   return async (email: string) => {
-    const redirectURL = getURL("/api/auth/callback");
+    const redirectURL = redirect
+      ? getURL(`/api/auth/callback?redirect=${encodeURIComponent(redirect)}`)
+      : getURL("/api/auth/callback");
 
     const { error } = await supabase.auth.signInWithOtp({
       email,
@@ -50,8 +55,10 @@ function useSignInWithEmail() {
 }
 
 export default function SignIn() {
-  const signInWithOAuth = useSignInWithOAuth();
-  const signInWithEmail = useSignInWithEmail();
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get("redirect");
+  const signInWithOAuth = useSignInWithOAuth(redirect);
+  const signInWithEmail = useSignInWithEmail(redirect);
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");

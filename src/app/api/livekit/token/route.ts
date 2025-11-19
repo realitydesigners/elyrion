@@ -18,24 +18,20 @@ export async function GET(request: Request) {
   const supabase = getSupabaseServer();
   const { data } = await supabase.auth.getUser();
   const user = data.user;
-  // Allow anonymous tokens for viewer/host during testing
-  if (!user && (role === "viewer" || role === "host")) {
-    const at = new AccessToken(
-      process.env.LIVEKIT_API_KEY!,
-      process.env.LIVEKIT_API_SECRET!,
-      { identity: `${role}-anon-${Date.now()}` }
-    );
-    at.addGrant({
-      room: roomName,
-      roomJoin: true,
-      canPublish: true,
-      canSubscribe: true,
-    });
-    const token = await at.toJwt();
-    return NextResponse.json({ token, url: process.env.LIVEKIT_URL, roomName });
-  }
-  if (!user)
+
+  if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  if (role === "host") {
+    const email = user.email;
+    if (!isTeacher(email)) {
+      return NextResponse.json(
+        { error: "Only teachers can access host route" },
+        { status: 403 }
+      );
+    }
+  }
 
   const canPublish = true;
 
