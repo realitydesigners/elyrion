@@ -40,11 +40,11 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: "/Elyrion-logo.png", sizes: "32x32", type: "image/png" },
-      { url: "/Elyrion-logo.png", sizes: "16x16", type: "image/png" },
+      { url: "/Elyrion.png", sizes: "32x32", type: "image/png" },
+      { url: "/Elyrion.png", sizes: "16x16", type: "image/png" },
     ],
-    shortcut: "/Elyrion-logo.png",
-    apple: [{ url: "/Elyrion-logo.png", sizes: "180x180", type: "image/png" }],
+    shortcut: "/Elyrion.png",
+    apple: [{ url: "/Elyrion.png", sizes: "180x180", type: "image/png" }],
   },
   manifest: "/site.webmanifest",
   openGraph: {
@@ -57,7 +57,7 @@ export const metadata: Metadata = {
     siteName: "Elyrion",
     images: [
       {
-        url: "/og.png",
+        url: "/Elyrion.png",
         width: 1200,
         height: 630,
         alt: "Reality Recode - The Complete System | Elyrion",
@@ -70,7 +70,7 @@ export const metadata: Metadata = {
     title: "Reality Recode - The Complete System | Elyrion",
     description:
       "The last system you'll ever need. Reality Recode restructures the invisible patterns that shape your reality so things shift on their own. Coming March 7th, 2025.",
-    images: ["/og.png"],
+    images: ["/Elyrion.png"],
     creator: "@Elyrion",
   },
   robots: {
@@ -94,7 +94,6 @@ export const metadata: Metadata = {
   category: "Personal Development",
   classification: "Personal Transformation System",
   referrer: "origin-when-cross-origin",
-  colorScheme: "dark light",
   appleWebApp: {
     capable: true,
     title: "Reality Recode",

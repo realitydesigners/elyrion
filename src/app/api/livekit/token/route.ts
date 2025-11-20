@@ -15,7 +15,7 @@ export async function GET(request: Request) {
   const role = searchParams.get("role") === "host" ? "host" : "viewer";
   const roomName = searchParams.get("room") || "elyrion-class";
 
-  const supabase = getSupabaseServer();
+  const supabase = await getSupabaseServer();
   const { data } = await supabase.auth.getUser();
   const user = data.user;
 

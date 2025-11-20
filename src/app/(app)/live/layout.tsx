@@ -6,7 +6,7 @@ export default async function LiveLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const supabase = getSupabaseServer();
+  const supabase = await getSupabaseServer();
   const { data } = await supabase.auth.getUser();
   if (!data.user) {
     redirect("/sign-in?redirect=/live");

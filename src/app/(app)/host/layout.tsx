@@ -7,7 +7,7 @@ export default async function HostLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const supabase = getSupabaseServer();
+  const supabase = await getSupabaseServer();
   const { data } = await supabase.auth.getUser();
   const user = data.user;
 

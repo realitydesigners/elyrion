@@ -4,7 +4,7 @@ import { getSupabaseServer } from "@/lib/supabaseServer";
 import { redirect } from "next/navigation";
 
 export default async function PricingPage() {
-  const supabase = getSupabaseServer();
+  const supabase = await getSupabaseServer();
   const { data } = await supabase.auth.getUser();
   const user = data.user;
 

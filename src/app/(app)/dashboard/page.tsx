@@ -15,7 +15,7 @@ export default async function DashboardPage(props: {
   searchParams: Promise<{ session_id?: string }>;
 }) {
   const searchParams = await props.searchParams;
-  const supabase = getSupabaseServer();
+  const supabase = await getSupabaseServer();
   const { data } = await supabase.auth.getUser();
   const user = data.user;
 
