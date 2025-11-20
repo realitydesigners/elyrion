@@ -3,7 +3,7 @@ import Stripe from "stripe";
 import { getSupabaseServer } from "@/lib/supabaseServer";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2024-11-20.acacia",
+  apiVersion: "2025-08-27.basil",
 });
 
 export async function POST(request: Request) {
@@ -29,7 +29,8 @@ export async function POST(request: Request) {
       );
     }
 
-    const origin = request.headers.get("origin") || request.url.split("/api")[0];
+    const origin =
+      request.headers.get("origin") || request.url.split("/api")[0];
 
     const session = await stripe.billingPortal.sessions.create({
       customer: subscription.stripe_customer_id,
@@ -45,4 +46,3 @@ export async function POST(request: Request) {
     );
   }
 }
-

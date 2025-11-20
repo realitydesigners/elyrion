@@ -3,7 +3,7 @@ import Stripe from "stripe";
 import { getSupabaseServer } from "@/lib/supabaseServer";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2024-11-20.acacia",
+  apiVersion: "2025-08-27.basil",
 });
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
@@ -47,7 +47,7 @@ export async function POST(request: Request) {
           status: subscription.status,
           plan_type: planType,
           current_period_end: new Date(
-            subscription.current_period_end * 1000
+            (subscription as any).current_period_end * 1000
           ).toISOString(),
         });
 
@@ -69,7 +69,7 @@ export async function POST(request: Request) {
           .update({
             status: subscription.status,
             current_period_end: new Date(
-              subscription.current_period_end * 1000
+              (subscription as any).current_period_end * 1000
             ).toISOString(),
             updated_at: new Date().toISOString(),
           })
@@ -91,4 +91,3 @@ export async function POST(request: Request) {
     );
   }
 }
-

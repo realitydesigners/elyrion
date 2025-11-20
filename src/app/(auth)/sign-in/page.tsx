@@ -2,7 +2,7 @@
 import { createClient } from "@/lib/supabase/client";
 import { getURL } from "@/utils/helpers";
 import type { Provider } from "@supabase/supabase-js";
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { FcGoogle } from "react-icons/fc";
 
@@ -54,7 +54,7 @@ function useSignInWithEmail(redirect?: string | null) {
   };
 }
 
-export default function SignIn() {
+function SignInContent() {
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect");
   const signInWithOAuth = useSignInWithOAuth(redirect);
@@ -178,5 +178,21 @@ export default function SignIn() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function SignIn() {
+  return (
+    <Suspense
+      fallback={
+        <div className="relative w-full overflow-hidden">
+          <div className="relative flex min-h-[100vh] flex-col items-center justify-center px-6 py-16">
+            <div className="text-white">Loading...</div>
+          </div>
+        </div>
+      }
+    >
+      <SignInContent />
+    </Suspense>
   );
 }
